@@ -18,18 +18,7 @@ export const contentSchema = z.object({
 		.optional(),
 
 	url: z.url({ error: "Please enter a valid URL" }).trim().optional(),
-	keywords: z
-		.string()
-		.optional()
-		.transform((value) => {
-			if (!value) return [];
-
-			return value
-				.split(",")
-				.map((k) => k.trim())
-				.filter(Boolean);
-		})
-		.refine((arr) => arr.length <= 10, "Maximum 10 keywords allowed"),
+	keywords: z.string().optional(),
 	targetAudience: z.enum(targetAudienceOptions, {
 		error: "Please select target audience",
 	}),
@@ -41,6 +30,7 @@ export const contentSchema = z.object({
 });
 
 export type ContentInput = z.infer<typeof contentSchema>;
+// export type ContentFormOutput = z.output<typeof contentSchema>;
 
 export const distributionSchema = z.object({
 	publishMode: z.enum(["now", "schedule"]),

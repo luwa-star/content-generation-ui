@@ -2,7 +2,7 @@
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { contentSchema, ContentInput } from "@/lib/schema";
+import { contentSchema, ContentInput, ContentFormOutput } from "@/lib/schema";
 import { generateDrafts } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
@@ -164,6 +164,16 @@ const rawX = {
 	},
 };
 
+type ContentOutputForm = {
+	topic: string;
+	type: "raw_idea" | "url";
+	targetAudience: string;
+	tone: "thought-leadership" | "technical" | "professional" | "casual";
+	idea?: string | undefined;
+	url?: string | undefined;
+	keywords?: string | string[] | undefined;
+};
+
 export default function ContentForm() {
 	const router = useRouter();
 
@@ -193,6 +203,14 @@ export default function ContentForm() {
 		} catch {
 			return false;
 		}
+	};
+	const parseKeywords = (value?: string) => {
+		if (!value) return [];
+
+		return value
+			.split(",")
+			.map((k) => k.trim())
+			.filter(Boolean);
 	};
 	const validate = (data: ContentInput) => {
 		if (data.type === "raw_idea") {
@@ -232,7 +250,18 @@ export default function ContentForm() {
 		setErrorType(null);
 		validate(data);
 
-		const res = await generateDrafts(data);
+		const payload: ContentOutputForm = { ...data };
+		if (payload.keywords) {
+			const keywords = parseKeywords(payload.keywords as string);
+			if (Array.isArray(keywords) && keywords.length > 10) {
+				setError("keywords", {
+					message: "Maximum 10 keywords allowed",
+				});
+				return;
+			}
+			payload.keywords = keywords;
+		}
+		const res = await generateDrafts(payload);
 		// const res = rawX;
 		console.log("res", res);
 		if (!res) {
