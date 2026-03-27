@@ -30,7 +30,16 @@ export const contentSchema = z.object({
 });
 
 export type ContentInput = z.infer<typeof contentSchema>;
-// export type ContentFormOutput = z.output<typeof contentSchema>;
+
+export type ContentOutputForm = {
+	topic: string;
+	type: "raw_idea" | "url";
+	targetAudience: string;
+	tone: "thought-leadership" | "technical" | "professional" | "casual";
+	idea?: string | undefined;
+	url?: string | undefined;
+	keywords?: string | string[] | undefined;
+};
 
 export const distributionSchema = z.object({
 	publishMode: z.enum(["now", "schedule"]),

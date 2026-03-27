@@ -2,7 +2,7 @@
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { contentSchema, ContentInput, ContentFormOutput } from "@/lib/schema";
+import { contentSchema, ContentInput, ContentOutputForm } from "@/lib/schema";
 import { generateDrafts } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
@@ -162,16 +162,6 @@ const rawX = {
 		tone: "technical",
 		audience: "Business Executives",
 	},
-};
-
-type ContentOutputForm = {
-	topic: string;
-	type: "raw_idea" | "url";
-	targetAudience: string;
-	tone: "thought-leadership" | "technical" | "professional" | "casual";
-	idea?: string | undefined;
-	url?: string | undefined;
-	keywords?: string | string[] | undefined;
 };
 
 export default function ContentForm() {
@@ -339,7 +329,7 @@ export default function ContentForm() {
 							<AlertDescription>{resError}</AlertDescription>
 							{errorType === "duplicate" && (
 								<Button
-									onClick={regenerateDraft}
+									onClick={handleSubmit(regenerateDraft)}
 									disabled={isRegeneRating}
 									className="w-full">
 									{isRegeneRating ? "Regenerating..." : "Regenerate Drafts"}

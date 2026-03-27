@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-	ContentFormOutput,
+	ContentOutputForm,
 	ContentInput,
 	PublishPayload,
 	SchedulePayload,
@@ -15,7 +15,7 @@ export const axiosInstance = axios.create({
 	},
 });
 
-export const generateDrafts = async (data: ContentFormOutput) => {
+export const generateDrafts = async (data: ContentOutputForm) => {
 	try {
 		const response = await axiosInstance.post("?content=generate", data);
 
