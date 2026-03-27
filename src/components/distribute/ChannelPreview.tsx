@@ -17,7 +17,7 @@ export default function ChannelPreview({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>{title}</CardTitle>
+				<CardTitle className="font-semibold">{title}</CardTitle>
 			</CardHeader>
 
 			<CardContent className="space-y-2">

@@ -82,12 +82,11 @@ export default function DistributionPage() {
 			recordID: data?.airtableId,
 			platforms,
 		};
-		console.log(payload);
 
 		setIsSubmitting(true);
 		if (publishMode === "now") {
 			const res = await publishContent(payload);
-			console.log("publish res", res);
+
 			setIsSubmitting(false);
 			if (!res) {
 				setResError("Something went wrong");
@@ -124,9 +123,9 @@ export default function DistributionPage() {
 				scheduledAt: scheduledAt?.toISOString(),
 				platforms,
 			});
-			console.log("schedule payload", payload);
+
 			const res = await scheduleContent(payload as SchedulePayload);
-			console.log("scheduled res", res);
+
 			setIsSubmitting(false);
 			if (!res) {
 				setResError("Something went wrong");
@@ -162,11 +161,11 @@ export default function DistributionPage() {
 			recordID: data?.airtableId,
 			platforms: errorPlatforms,
 		};
-		console.log(payload);
+
 		setIsRetrying(true);
 
 		const res = await publishContent(payload);
-		console.log("publish res", res);
+
 		setIsRetrying(false);
 		if (!res) {
 			setResError("Something went wrong");
@@ -238,6 +237,7 @@ export default function DistributionPage() {
 									Check out the content calendar here{" "}
 									<a
 										href="https://airtable.com/appfBqp8T9RYWiHaS/shrBFKOcDlPsFGQVS"
+										target="_blank"
 										className="text-blue-500 underline">
 										here
 									</a>
@@ -260,6 +260,7 @@ export default function DistributionPage() {
 
 									<a
 										href="https://airtable.com/appfBqp8T9RYWiHaS/shrEGfPtaq3j67lhq"
+										target="_blank"
 										className="text-blue-500 underline">
 										Click here to view Error logs
 									</a>
