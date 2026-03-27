@@ -44,6 +44,22 @@ export const targetAudienceOptions = [
 	"General Business Audience",
 ];
 
+export const platformOptions = [
+	{
+		label: "LinkedIn",
+		value: "linkedin",
+	},
+
+	{
+		label: "X (Twitter)",
+		value: "twitter",
+	},
+
+	{
+		label: "Email Newsletter",
+		value: "email",
+	},
+];
 export interface GenerateDraftRes {
 	success: boolean;
 	message: string;
@@ -109,4 +125,8 @@ export interface PublishRes {
 	type?: "new" | "duplicate" | "error" | string;
 	code?: number;
 	status?: number;
+	platforms?: string[];
+	hasError?: boolean;
+	errors?: string[] | string;
+	recordID?: string;
 }

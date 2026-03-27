@@ -45,6 +45,9 @@ export type ContentInput = z.infer<typeof contentSchema>;
 export const distributionSchema = z.object({
 	publishMode: z.enum(["now", "schedule"]),
 	scheduledAt: z.date().optional(),
+	platforms: z
+		.array(z.enum(["linkedin", "twitter", "email"]))
+		.min(1, "Select at least one platform"),
 });
 
 export interface SelectDraftPayload {
@@ -57,6 +60,7 @@ export interface SelectDraftPayload {
 export interface PublishPayload {
 	draft: PlatformPreview | undefined;
 	recordID: string | undefined;
+	platforms: string[];
 }
 
 export interface SchedulePayload extends PublishPayload {

@@ -177,6 +177,8 @@ export default function ContentForm() {
 		formState: { isSubmitting, errors, isValid },
 	} = useForm<ContentInput>({
 		resolver: zodResolver(contentSchema),
+		mode: "onChange",
+		reValidateMode: "onChange",
 	});
 	const [resError, setResError] = useState<string | null>(null);
 	const [errorType, setErrorType] = useState<"duplicate" | "error" | null>(
@@ -241,6 +243,10 @@ export default function ContentForm() {
 			setResError(res.message);
 			return;
 		}
+		if (!res.success) {
+			setResError(res.message);
+			return;
+		}
 		if (res.type === "duplicate") {
 			localStorage.setItem("duplicateData", JSON.stringify(res));
 			router.push("/duplicate");
@@ -263,6 +269,11 @@ export default function ContentForm() {
 		if (res.code && res.code !== 200) {
 			setResError(res.message);
 			setIsRegenerating(false);
+			return;
+		}
+		if (!res.success) {
+			setResError(res.message);
+
 			return;
 		}
 		localStorage.setItem("drafts", JSON.stringify(res.data));

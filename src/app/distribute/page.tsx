@@ -29,6 +29,7 @@ import {
 	SelectDraftData,
 	TweetData,
 } from "@/lib/interface";
+import PlatformSelector from "@/components/PlatformSelector";
 
 // TODO:
 // 1. ADD MODAL TO TELL USERS THAT CONTENT IS PUBLISHED
@@ -39,6 +40,13 @@ export default function DistributionPage() {
 
 	const [successRes, setSuccessRes] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+	const [errorPlatforms, setErrorPlatforms] = useState<
+		string[] | null | undefined
+	>(null);
+	const [isRetrying, setIsRetrying] = useState<boolean>(false);
+	const [errorType, setErrorType] = useState<"duplicate" | "error" | null>(
+		null,
+	);
 
 	useEffect(() => {
 		const stored = localStorage.getItem("previewContent");
@@ -49,7 +57,7 @@ export default function DistributionPage() {
 	}, []);
 	// console.log("preview==string", JSON.stringify(data, null, 2));
 
-	const { handleSubmit, watch, setValue, control } = useForm({
+	const { handleSubmit, watch, setValue, setError, control } = useForm({
 		resolver: zodResolver(distributionSchema),
 
 		defaultValues: {
@@ -62,43 +70,67 @@ export default function DistributionPage() {
 	const onSubmit = async ({
 		publishMode,
 		scheduledAt,
+		platforms,
 	}: {
 		publishMode: string;
 		scheduledAt?: Date;
+		platforms: string[];
 	}) => {
 		setResError(null);
 		setSuccessRes(null);
+		setErrorType(null);
+		setErrorPlatforms(null);
+
 		let payload = {
 			draft: data?.draft,
 			recordID: data?.airtableId,
+			platforms,
 		};
+		console.log(payload);
+
 		setIsSubmitting(true);
 		if (publishMode === "now") {
-			console.log(payload);
 			const res = await publishContent(payload);
 			console.log("publish res", res);
 			setIsSubmitting(false);
 			if (!res) {
 				setResError("Something went wrong");
+
 				return;
 			}
 			if (res.code && res.code !== 200) {
 				setResError(res.message);
+				return;
+			}
+			if (!res.success) {
+				setResError(res.message);
+				if (res.platforms) {
+					setErrorPlatforms(res.platforms);
+				}
+				if (res.type === "duplicate") {
+					setErrorType("duplicate");
+					setResError(res.message);
+				}
 
 				return;
 			}
 
-			setIsSubmitting(false);
 			setSuccessRes(res.message);
 			return;
 		}
 
 		if (publishMode === "schedule") {
+			if (!scheduledAt) {
+				setError("scheduledAt", { message: "Please select a date and time" });
+				return;
+			}
 			payload = Object.assign(payload, {
 				scheduledAt: scheduledAt?.toISOString(),
+				platforms,
 			});
-			console.log("payload", payload);
+			console.log("schedule payload", payload);
 			const res = await scheduleContent(payload as SchedulePayload);
+			console.log("scheduled res", res);
 			setIsSubmitting(false);
 			if (!res) {
 				setResError("Something went wrong");
@@ -109,9 +141,55 @@ export default function DistributionPage() {
 
 				return;
 			}
+
+			if (!res.success) {
+				setResError(res.message);
+				if (res.type === "duplicate") {
+					setErrorType("duplicate");
+					setResError(res.message);
+				}
+				return;
+			}
 			setIsSubmitting(false);
 			setSuccessRes(res.message);
 		}
+	};
+
+	const retryPublish = async () => {
+		setResError(null);
+		setSuccessRes(null);
+		setErrorPlatforms(null);
+
+		const payload = {
+			draft: data?.draft,
+			recordID: data?.airtableId,
+			platforms: errorPlatforms,
+		};
+		console.log(payload);
+		return;
+		setIsRetrying(true);
+
+		const res = await publishContent(payload);
+		console.log("publish res", res);
+		setIsRetrying(false);
+		if (!res) {
+			setResError("Something went wrong");
+			return;
+		}
+		if (res.code && res.code !== 200) {
+			setResError(res.message);
+			return;
+		}
+
+		if (!res.success) {
+			setResError(res.message);
+			if (res.platforms) {
+				setErrorPlatforms(res.platforms);
+			}
+
+			return;
+		}
+		setSuccessRes(res.message);
 	};
 
 	if (!data) return <p>No draft found</p>;
@@ -166,14 +244,51 @@ export default function DistributionPage() {
 					)}
 					{resError && (
 						<div className="grid w-full items-start gap-4">
-							<Alert variant="destructive">
-								<CircleXIcon />
-								<AlertTitle>Error</AlertTitle>
+							{/* className="flex flex-col" */}
+							<Alert className="flex flex-col space-y-2" variant="destructive">
+								<div className="flex gap-2">
+									<CircleXIcon size={20} />
+									<AlertTitle>
+										{errorType === "duplicate" ? "Duplicate" : "Error"}
+									</AlertTitle>
+								</div>
 								<AlertDescription>{resError}</AlertDescription>
+								{Array.isArray(errorPlatforms) &&
+									errorPlatforms?.length > 0 && (
+										<AlertDescription>
+											<p>Failed to publish on: {errorPlatforms.join(", ")}</p>
+											<Button disabled={isRetrying} onClick={retryPublish}>
+												Retry
+											</Button>
+										</AlertDescription>
+									)}
 							</Alert>
 						</div>
 					)}
-					<Select onValueChange={(v) => setValue("publishMode", v)}>
+					<Controller
+						name="platforms"
+						control={control}
+						render={({ field, fieldState }) => (
+							<div className="space-y-2">
+								<Label>Select platform(s)</Label>
+
+								<PlatformSelector
+									value={field.value || []}
+									onChange={field.onChange}
+								/>
+
+								{fieldState.error && (
+									<p className="text-sm text-destructive">
+										{fieldState.error.message}
+									</p>
+								)}
+							</div>
+						)}
+					/>
+					<Label>Publish Mode</Label>
+					<Select
+						defaultValue="now"
+						onValueChange={(v) => setValue("publishMode", v)}>
 						<SelectTrigger>
 							<SelectValue placeholder="Select publish option" />
 						</SelectTrigger>
@@ -210,7 +325,7 @@ export default function DistributionPage() {
 
 					<Button
 						onClick={handleSubmit(onSubmit)}
-						disabled={isSubmitting}
+						disabled={isSubmitting || isRetrying}
 						className="w-full">
 						Continue
 					</Button>

@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 
 import { CalendarIcon } from "lucide-react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Props = {
 	value?: Date;
@@ -24,57 +24,67 @@ type Props = {
 	onChange: (date?: Date) => void;
 };
 
-export default function DateTimePicker({ value, onChange }: Props) {
+export default function DateTimePicker({
+	value,
+
+	onChange,
+}: Props) {
+	const [selectedDate, setSelectedDate] = useState<Date | undefined>(value);
+
 	const [time, setTime] = useState(value ? format(value, "HH:mm") : "");
 
-	const updateDate = (date?: Date) => {
-		if (!date) return;
+	// combine date + time only when both exist
+
+	useEffect(() => {
+		if (!selectedDate) {
+			onChange(undefined);
+
+			return;
+		}
+
+		if (!time) {
+			onChange(undefined);
+
+			return;
+		}
 
 		const [hours, minutes] = time.split(":");
 
-		const newDate = new Date(date);
+		const combined = new Date(selectedDate);
 
-		newDate.setHours(Number(hours || 0));
+		combined.setHours(Number(hours));
 
-		newDate.setMinutes(Number(minutes || 0));
+		combined.setMinutes(Number(minutes));
 
-		onChange(newDate);
-	};
+		combined.setSeconds(0);
 
-	const updateTime = (timeValue: string) => {
-		setTime(timeValue);
-
-		if (!value) return;
-
-		const [hours, minutes] = timeValue.split(":");
-
-		const newDate = new Date(value);
-
-		newDate.setHours(Number(hours));
-
-		newDate.setMinutes(Number(minutes));
-
-		onChange(newDate);
-	};
+		onChange(combined);
+	}, [selectedDate, time]);
 
 	return (
 		<div className="flex gap-3">
-			{/* date */}
+			{/* DATE */}
 
 			<Popover>
 				<PopoverTrigger asChild>
-					<Button variant="outline" className="w-[200px] justify-start">
+					<Button
+						variant="outline"
+						className={`
+       w-[200px]
+       justify-start
+       ${!selectedDate ? "text-muted-foreground" : ""}
+      `}>
 						<CalendarIcon size={16} className="mr-2" />
 
-						{value ? format(value, "PPP") : "Pick date"}
+						{selectedDate ? format(selectedDate, "PPP") : "Pick date"}
 					</Button>
 				</PopoverTrigger>
 
 				<PopoverContent>
 					<Calendar
 						mode="single"
-						selected={value}
-						onSelect={updateDate}
+						selected={selectedDate}
+						onSelect={setSelectedDate}
 						disabled={{
 							before: new Date(),
 						}}
@@ -82,13 +92,17 @@ export default function DateTimePicker({ value, onChange }: Props) {
 				</PopoverContent>
 			</Popover>
 
-			{/* time */}
+			{/* TIME */}
 
 			<Input
 				type="time"
 				value={time}
-				onChange={(e) => updateTime(e.target.value)}
-				className="w-[120px]"
+				onChange={(e) => setTime(e.target.value)}
+				className={`
+     w-[120px]
+
+     ${!time ? "text-muted-foreground" : ""}
+    `}
 			/>
 		</div>
 	);

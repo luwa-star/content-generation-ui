@@ -69,6 +69,10 @@ export default function DraftCard({
 
 			return;
 		}
+		if (!res.success) {
+			setResError(res.message);
+			return;
+		}
 		if (res.type === "duplicate") {
 			localStorage.setItem("duplicateData", JSON.stringify(res));
 			router.push("/duplicate");
