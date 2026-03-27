@@ -288,7 +288,9 @@ export default function DistributionPage() {
 					<Label>Publish Mode</Label>
 					<Select
 						defaultValue="now"
-						onValueChange={(v) => setValue("publishMode", v)}>
+						onValueChange={(v: "now" | "schedule") =>
+							setValue("publishMode", v)
+						}>
 						<SelectTrigger>
 							<SelectValue placeholder="Select publish option" />
 						</SelectTrigger>
