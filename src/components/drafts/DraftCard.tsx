@@ -13,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 import MarkdownViewer from "../markdown/MarkdownViewer";
 import { DraftAngle, SelectDraftRes } from "@/lib/interface";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
 	draft: DraftAngle;
@@ -74,8 +75,7 @@ export default function DraftCard({
 			return;
 		}
 		if (res.type === "duplicate") {
-			localStorage.setItem("duplicateData", JSON.stringify(res));
-			router.push("/duplicate");
+			setResError(res.message);
 			return;
 		}
 
@@ -88,8 +88,8 @@ export default function DraftCard({
 			<CardContent className="space-y-3">
 				<div className="flex gap-2 items-center">
 					<FileText size={16} />
-
 					<p className="font-medium">{draft.title}</p>
+					<Badge variant="secondary">{draft.angle}</Badge>
 				</div>
 
 				<MarkdownViewer content={draft.article_markdown} />

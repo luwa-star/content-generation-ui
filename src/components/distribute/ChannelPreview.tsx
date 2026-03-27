@@ -37,11 +37,7 @@ export default function ChannelPreview({
 							Subject: {emailProps?.subject}
 						</p>
 						<p className="font-semibold text-xl">Body:</p>
-						{/* <div
-							dangerouslySetInnerHTML={{
-								__html: emailProps?.html as string,
-							}}
-						/> */}
+
 						<MarkdownViewer content={content as string} />
 					</div>
 				)}

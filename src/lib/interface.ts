@@ -66,6 +66,7 @@ export interface GenerateDraftRes {
 	type?: "new" | "duplicate" | "error" | string;
 	code?: number;
 	status?: number;
+	recordId: string;
 	data?: {
 		drafts: DraftAngle[];
 		airtableId: string;

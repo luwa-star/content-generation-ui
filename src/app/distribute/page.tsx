@@ -31,9 +31,6 @@ import {
 } from "@/lib/interface";
 import PlatformSelector from "@/components/PlatformSelector";
 
-// TODO:
-// 1. ADD MODAL TO TELL USERS THAT CONTENT IS PUBLISHED
-// 2. IF PUBLISHING IS SCHEDULED IT SHOULD BE VISIBLE IN THE DASHBOARD. TAKE THEM TO AIRTABLE DASHBAORD(INTERFACE)
 export default function DistributionPage() {
 	const [data, setData] = useState<SelectDraftData | null>(null);
 	const [resError, setResError] = useState<string | null>(null);
@@ -55,9 +52,8 @@ export default function DistributionPage() {
 			setData(JSON.parse(stored));
 		}
 	}, []);
-	// console.log("preview==string", JSON.stringify(data, null, 2));
 
-	const { handleSubmit, watch, setValue, setError, control } = useForm({
+	const { handleSubmit, watch, setValue, setError, control, reset } = useForm({
 		resolver: zodResolver(distributionSchema),
 
 		defaultValues: {
@@ -114,7 +110,7 @@ export default function DistributionPage() {
 
 				return;
 			}
-
+			reset();
 			setSuccessRes(res.message);
 			return;
 		}
@@ -150,6 +146,7 @@ export default function DistributionPage() {
 				}
 				return;
 			}
+			reset();
 			setIsSubmitting(false);
 			setSuccessRes(res.message);
 		}
@@ -166,7 +163,6 @@ export default function DistributionPage() {
 			platforms: errorPlatforms,
 		};
 		console.log(payload);
-		return;
 		setIsRetrying(true);
 
 		const res = await publishContent(payload);
@@ -238,13 +234,19 @@ export default function DistributionPage() {
 								<AlertTitle>Success</AlertTitle>
 								<AlertDescription>
 									{successRes || "Content published successfully"}
+									<br />
+									Check out the content calendar here{" "}
+									<a
+										href="https://airtable.com/appfBqp8T9RYWiHaS/shrBFKOcDlPsFGQVS"
+										className="text-blue-500 underline">
+										here
+									</a>
 								</AlertDescription>
 							</Alert>
 						</div>
 					)}
 					{resError && (
 						<div className="grid w-full items-start gap-4">
-							{/* className="flex flex-col" */}
 							<Alert className="flex flex-col space-y-2" variant="destructive">
 								<div className="flex gap-2">
 									<CircleXIcon size={20} />
@@ -252,7 +254,16 @@ export default function DistributionPage() {
 										{errorType === "duplicate" ? "Duplicate" : "Error"}
 									</AlertTitle>
 								</div>
-								<AlertDescription>{resError}</AlertDescription>
+								<AlertDescription>
+									{resError}
+									<br />
+
+									<a
+										href="https://airtable.com/appfBqp8T9RYWiHaS/shrEGfPtaq3j67lhq"
+										className="text-blue-500 underline">
+										Click here to view Error logs
+									</a>
+								</AlertDescription>
 								{Array.isArray(errorPlatforms) &&
 									errorPlatforms?.length > 0 && (
 										<AlertDescription>

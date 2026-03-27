@@ -27,6 +27,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 import { useState } from "react";
 import { targetAudienceOptions } from "@/lib/interface";
+import { tr } from "zod/locales";
 
 const raw = {
 	success: true,
@@ -185,6 +186,7 @@ export default function ContentForm() {
 		null,
 	);
 	const [isRegeneRating, setIsRegenerating] = useState<boolean>(false);
+	const [duplicateId, setDuplicateId] = useState<string | null>(null);
 
 	const isValidUrl = (value: string) => {
 		try {
@@ -239,7 +241,7 @@ export default function ContentForm() {
 		setResError(null);
 		setErrorType(null);
 		validate(data);
-
+		setDuplicateId(null);
 		const payload: ContentOutputForm = { ...data };
 		if (payload.keywords) {
 			const keywords = parseKeywords(payload.keywords as string);
@@ -251,9 +253,12 @@ export default function ContentForm() {
 			}
 			payload.keywords = keywords;
 		}
+		console.log("payload", payload);
+
 		const res = await generateDrafts(payload);
 		// const res = rawX;
 		console.log("res", res);
+
 		if (!res) {
 			setResError("Something went wrong");
 			return;
@@ -267,8 +272,11 @@ export default function ContentForm() {
 			return;
 		}
 		if (res.type === "duplicate") {
-			localStorage.setItem("duplicateData", JSON.stringify(res));
-			router.push("/duplicate");
+			// localStorage.setItem("duplicateData", JSON.stringify(res));
+			// router.push("/duplicate");
+			setErrorType("duplicate");
+			setResError("Duplicate Content");
+			setDuplicateId(res?.recordId || null);
 			return;
 		}
 
@@ -327,14 +335,25 @@ export default function ContentForm() {
 							<CircleXIcon />
 							<AlertTitle>Error</AlertTitle>
 							<AlertDescription>{resError}</AlertDescription>
-							{errorType === "duplicate" && (
-								<Button
-									onClick={handleSubmit(regenerateDraft)}
-									disabled={isRegeneRating}
-									className="w-full">
-									{isRegeneRating ? "Regenerating..." : "Regenerate Drafts"}
-								</Button>
-							)}
+						</Alert>
+					</div>
+				)}
+				{errorType === "duplicate" && (
+					<div className="grid w-full items-start gap-4">
+						<Alert variant="destructive">
+							<CircleXIcon />
+							<AlertTitle>Duplicate Content</AlertTitle>
+							<AlertDescription>
+								We found similar content already published. Review before
+								continuing.
+								<a
+									className="underline text-blue-600"
+									href={`https://airtable.com/appfBqp8T9RYWiHaS/shr7GSCQ9DudHimix/tbldTLf39Q4gc5XrU/${duplicateId}`}
+									target="_blank"
+									rel="noopener noreferrer">
+									View Draft
+								</a>
+							</AlertDescription>
 						</Alert>
 					</div>
 				)}
@@ -461,7 +480,7 @@ export default function ContentForm() {
 						type="submit"
 						disabled={isSubmitting || !isValid}
 						className="w-full">
-						Generate Drafts
+						{isSubmitting ? "Generating..." : "Generate Drafts"}
 					</Button>
 				</form>
 			</CardContent>
