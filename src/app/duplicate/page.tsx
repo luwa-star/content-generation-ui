@@ -53,7 +53,7 @@ export default function DuplicatesPage() {
 
 					<div className="space-y-4">
 						{Array.isArray(data?.matches) &&
-							data?.matches.map((match) => (
+							data?.matches.map((match: any) => (
 								<Card key={match.id}>
 									<CardHeader>
 										<div className="flex justify-between items-center">
