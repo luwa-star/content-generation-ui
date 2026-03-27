@@ -60,7 +60,7 @@ export interface SelectDraftPayload {
 export interface PublishPayload {
 	draft: PlatformPreview | undefined;
 	recordID: string | undefined;
-	platforms: string[];
+	platforms: string[] | null | undefined;
 }
 
 export interface SchedulePayload extends PublishPayload {
