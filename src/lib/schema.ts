@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { targetAudienceOptions } from "./interface";
+import {
+	DraftAngle,
+	PlatformPreview,
+	targetAudienceOptions,
+} from "./interface";
 
 export const contentSchema = z.object({
 	topic: z.string().min(1, "Please enter a topic"),
@@ -42,3 +46,19 @@ export const distributionSchema = z.object({
 	publishMode: z.enum(["now", "schedule"]),
 	scheduledAt: z.date().optional(),
 });
+
+export interface SelectDraftPayload {
+	airtableId: string;
+	tone: string;
+	audience: string;
+	draft: DraftAngle;
+}
+
+export interface PublishPayload {
+	draft: PlatformPreview | undefined;
+	recordID: string | undefined;
+}
+
+export interface SchedulePayload extends PublishPayload {
+	scheduledAt: string | undefined;
+}

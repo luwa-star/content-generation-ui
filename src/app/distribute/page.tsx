@@ -18,15 +18,23 @@ import {
 
 import { CircleXIcon } from "lucide-react";
 
-import { formatISO } from "date-fns";
-import { distributionSchema } from "@/lib/schema";
+import { distributionSchema, SchedulePayload } from "@/lib/schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import DateTimePicker from "@/components/DateTimePicker";
+import {
+	EmailData,
+	LinkedInData,
+	SelectDraftData,
+	TweetData,
+} from "@/lib/interface";
 
+// TODO:
+// 1. ADD MODAL TO TELL USERS THAT CONTENT IS PUBLISHED
+// 2. IF PUBLISHING IS SCHEDULED IT SHOULD BE VISIBLE IN THE DASHBOARD. TAKE THEM TO AIRTABLE DASHBAORD(INTERFACE)
 export default function DistributionPage() {
-	const [data, setData] = useState<any>(null);
+	const [data, setData] = useState<SelectDraftData | null>(null);
 	const [resError, setResError] = useState<string | null>(null);
 
 	const [successRes, setSuccessRes] = useState<string | null>(null);
@@ -59,9 +67,10 @@ export default function DistributionPage() {
 		scheduledAt?: Date;
 	}) => {
 		setResError(null);
+		setSuccessRes(null);
 		let payload = {
-			draft: data.draft,
-			recordID: data.airtableId,
+			draft: data?.draft,
+			recordID: data?.airtableId,
 		};
 		setIsSubmitting(true);
 		if (publishMode === "now") {
@@ -89,7 +98,7 @@ export default function DistributionPage() {
 				scheduledAt: scheduledAt?.toISOString(),
 			});
 			console.log("payload", payload);
-			const res = await scheduleContent(payload);
+			const res = await scheduleContent(payload as SchedulePayload);
 			setIsSubmitting(false);
 			if (!res) {
 				setResError("Something went wrong");
@@ -107,7 +116,10 @@ export default function DistributionPage() {
 
 	if (!data) return <p>No draft found</p>;
 
-	const reConstructTweet = JSON.parse(data.draft.x).tweets.join("\n");
+	const tweets = JSON.parse(data.draft.x) as TweetData;
+	const linkedIn = JSON.parse(data.draft.linkedIn) as LinkedInData;
+	const email = JSON.parse(data.draft.email) as EmailData;
+
 	return (
 		<main className="p-10 space-y-6 min-h-screen bg-muted/40">
 			<h1 className="text-xl font-semibold">Distribution</h1>
@@ -115,20 +127,17 @@ export default function DistributionPage() {
 			<div className="grid md:grid-cols-3 gap-6">
 				<ChannelPreview
 					title="LinkedIn"
-					content={JSON.parse(data.draft.linkedIn).post}
-					emailProps={{}}
+					content={linkedIn.post_text}
+					type={"linkedIn"}
 				/>
 
-				<ChannelPreview
-					title="X(Twitter)"
-					content={reConstructTweet}
-					emailProps={{}}
-				/>
+				<ChannelPreview title="X(Twitter)" content={tweets.tweets} type={"x"} />
 
 				<ChannelPreview
 					title="Email"
-					content={JSON.parse(data.draft.email).body}
-					emailProps={JSON.parse(data.draft.email)}
+					content={email.markdown}
+					emailProps={email}
+					type={"email"}
 				/>
 			</div>
 			<Card className="max-w-md">
@@ -176,23 +185,6 @@ export default function DistributionPage() {
 						</SelectContent>
 					</Select>
 
-					{/* {publishMode === "schedule" && (
-						<Popover>
-							<PopoverTrigger asChild>
-								<Button variant="outline" className="w-full justify-start">
-									<CalendarIcon className="mr-2" size={16} />
-									Select date
-								</Button>
-							</PopoverTrigger>
-
-							<PopoverContent>
-								<Calendar
-									mode="single"
-									onSelect={(date) => setValue("scheduledAt", date)}
-								/>
-							</PopoverContent>
-						</Popover>
-					)} */}
 					{publishMode === "schedule" && (
 						<Controller
 							name="scheduledAt"

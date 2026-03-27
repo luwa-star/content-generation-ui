@@ -1,18 +1,19 @@
 "use client";
 
 import DraftCard from "@/components/drafts/DraftCard";
-import { responseData } from "@/lib/data";
+import { DraftAngle } from "@/lib/interface";
 import { useEffect, useState } from "react";
 
 export default function DraftPage() {
-	const [drafts, setDrafts] = useState<any[]>([]);
+	const [drafts, setDrafts] = useState<DraftAngle[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 	useEffect(() => {
 		const stored = localStorage.getItem("drafts");
 
 		if (stored) {
-			setDrafts(JSON.parse(stored));
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setDrafts(JSON.parse(stored) as DraftAngle[]);
 		}
 	}, []);
 

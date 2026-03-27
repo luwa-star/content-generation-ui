@@ -1,30 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MarkdownViewer from "../markdown/MarkdownViewer";
+import { EmailData } from "@/lib/interface";
 
-export default function ChannelPreview({ title, content, emailProps }) {
+interface Props {
+	title: string;
+	content: string | string[];
+	type: "x" | "linkedIn" | "email";
+	emailProps?: EmailData;
+}
+export default function ChannelPreview({
+	title,
+	content,
+	emailProps,
+	type,
+}: Props) {
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle>{title}</CardTitle>
 			</CardHeader>
 
-			<CardContent>
-				{/* <p className="text-sm whitespace-pre-wrap">
-
-          {content}
-
-        </p> */}
-				{title.toLowerCase() === "email" && (
+			<CardContent className="space-y-2">
+				{type === "linkedIn" && (
+					<div className="whitespace-pre-wrap">{content}</div>
+				)}
+				{type === "x" &&
+					Array.isArray(content) &&
+					content.map((tweet, index) => (
+						<div key={index} className="border rounded-xl p-3">
+							{tweet}
+						</div>
+					))}
+				{type === "email" && (
 					<div>
-						<p className="font-extrabold">Subject: {emailProps.subject}</p>
-						<p className="font-extrabold">
-							Preview Text: {emailProps.previewText}
+						<p className="font-semibold text-xl">
+							Subject: {emailProps?.subject}
 						</p>
-						<p className="text-sm font-extrabold">Body:</p>
+						<p className="font-semibold text-xl">Body:</p>
+						{/* <div
+							dangerouslySetInnerHTML={{
+								__html: emailProps?.html as string,
+							}}
+						/> */}
+						<MarkdownViewer content={content as string} />
 					</div>
 				)}
-
-				<MarkdownViewer content={content} />
 			</CardContent>
 		</Card>
 	);

@@ -88,6 +88,82 @@ const raw = {
 		audience: "Marketing Managers",
 	},
 };
+const rawX = {
+	success: true,
+	message: "Fetched successfully",
+	type: "new",
+	data: {
+		drafts: [
+			{
+				angle: "educational",
+				title: "Essential Marketing Statistics for Growth in 2026",
+				metaDescription:
+					"Discover foundational marketing statistics crucial for business growth in 2026. Enhance your understanding with key insights.",
+				keywords: [
+					"marketing statistics",
+					"business growth",
+					"digital marketing insights",
+				],
+				outline: [
+					"Introduction",
+					"Importance of Marketing Statistics",
+					"Key Digital Marketing Trends",
+					"Analyzing Industry Benchmarks",
+					"Understanding SEO Insights",
+					"Conclusion",
+				],
+				article_markdown:
+					"# Essential Marketing Statistics for Growth in 2026\n\n## Introduction\n\nIn today's dynamic business environment, understanding key marketing statistics is essential for growth. As we approach 2026, businesses should focus on relevant data and trends to enhance their strategies. This article provides foundational insights into critical marketing statistics you need to know.\n\n## Importance of Marketing Statistics\n\nMarketing statistics provide valuable insights into consumer behavior, industry trends, and competitive benchmarks. By analyzing these numbers, businesses can tailor their strategies for more effective engagement and conversion.\n\n- Identify target audience preferences\n- Anticipate market shifts\n- Enhance customer engagement strategies\n\n## Key Digital Marketing Trends\n\nUnderstanding digital marketing trends is crucial for staying competitive. In 2026, focus on the following trends:\n\n- **Voice Search Optimization**: With 73.7% of marketers investing in this area, it's crucial to optimize for voice search to remain visible.\n- **AI in Marketing**: 94% of marketers plan to use AI in content creation, highlighting its growing importance.\n\n## Analyzing Industry Benchmarks\n\nIndustry benchmarks help evaluate performance relative to competitors. Consider these key benchmarks:\n\n- **Conversion Rate Optimization**: The second-most-used optimization technique makes it vital for improving efficiency.\n- **PPC Advertising**: With 84% success rates, it's a powerful tool for increasing visibility and revenue.\n\n## Understanding SEO Insights\n\nSEO remains a dominant factor in digital marketing strategies. Key insights for 2026 include:\n\n- Stay updated on SEO strategies, with 41% of marketers planning to refine their approach.\n- Keep pace with generative AI impacts on search.\n\n## Conclusion\n\nMarketing statistics are a powerful tool for guiding business decisions and strategies. By understanding these numbers, you'll be well-equipped to adapt and succeed in 2026.\n\n## Call to action\n\nStart leveraging key marketing statistics today to ensure your business thrives in the upcoming year. Explore detailed reports for further insights.",
+			},
+			{
+				angle: "strategic",
+				title: "Harnessing Marketing Trends for Strategic Growth in 2026",
+				metaDescription:
+					"Explore how strategic marketing trends can drive growth in 2026. Learn about opportunities and industry positioning.",
+				keywords: [
+					"strategic growth",
+					"marketing trends",
+					"industry positioning",
+				],
+				outline: [
+					"Introduction",
+					"The Role of Strategic Marketing",
+					"Emerging Trends and Opportunities",
+					"Positioning Your Brand for Success",
+					"Analytics and Data-Driven Decisions",
+					"Conclusion",
+				],
+				article_markdown:
+					"# Harnessing Marketing Trends for Strategic Growth in 2026\n\n## Introduction\n\nAs businesses look towards 2026, leveraging strategic marketing trends becomes pivotal. By understanding and capitalizing on these opportunities, you can position your brand for substantial growth. This article explores key trends and strategic insights for the coming year.\n\n## The Role of Strategic Marketing\n\nStrategic marketing involves aligning your marketing efforts with broader business goals. It helps in:\n\n- Identifying growth opportunities\n- Differentiating from competitors\n- Enhancing brand visibility and market positioning\n\n## Emerging Trends and Opportunities\n\n2026 presents several emerging marketing trends:\n\n- **AI Integration**: Transforming customer interactions and service delivery, AI is set to redefine customer experiences.\n- **Content Personalization**: Creating tailored content that resonates with specific audience segments, enhancing engagement.\n\n## Positioning Your Brand for Success\n\nStrategic positioning is crucial to maintain relevance:\n\n- Align marketing strategies with consumer expectations and trends.\n- Utilize AI-powered tools to strengthen customer engagements and brand loyalty.\n\n## Analytics and Data-Driven Decisions\n\nAnalytics play a fundamental role in strategic marketing:\n\n- Use data to monitor campaign performance and adjust strategies dynamically.\n- Adopt a data-driven approach for predictive modeling and trend forecasting.\n\n## Conclusion\n\nSuccessful marketing in 2026 will depend on strategic positioning and data-driven insights. Embrace these trends to capitalize on opportunities and drive growth.\n\n## Call to action\n\nAlign your marketing strategies with emerging trends today and ensure your brand is positioned for success in the future. Discover the latest strategic insights now.",
+			},
+			{
+				angle: "tactical",
+				title: "Implementing Effective Marketing Strategies for 2026",
+				metaDescription:
+					"Learn step-by-step tactics to implement successful marketing strategies in 2026. Boost conversions and drive results.",
+				keywords: [
+					"effective marketing strategies",
+					"tactical marketing",
+					"boost conversions",
+				],
+				outline: [
+					"Introduction",
+					"Setting Up Tactical Marketing Goals",
+					"Actionable Steps for Strategy Implementation",
+					"Frameworks for Tracking Success",
+					"Example Tactics for Immediate Impact",
+					"Conclusion",
+				],
+				article_markdown:
+					"# Implementing Effective Marketing Strategies for 2026\n\n## Introduction\n\nImplementing effective marketing strategies is crucial for achieving business success. As 2026 approaches, understanding tactical steps is essential for boosting conversions and driving results. This article provides detailed frameworks and actionable tactics for your marketing efforts.\n\n## Setting Up Tactical Marketing Goals\n\nDefine clear, measurable objectives to guide your strategies:\n\n- Set SMART goals for clarity and direction.\n- Align goals with broader strategic business objectives.\n\n## Actionable Steps for Strategy Implementation\n\nImplementing a marketing strategy involves specific, calculated actions:\n\n- Conduct a thorough market analysis to inform your strategy.\n- Develop a content calendar to ensure consistent engagement.\n- Optimize your digital presence for SEO and voice search.\n\n## Frameworks for Tracking Success\n\nUse structured frameworks to evaluate progress:\n\n- **Key Performance Indicators (KPIs)**: Establish KPIs to measure key areas of performance.\n- **Regular Audits**: Schedule audits to assess strategy effectiveness and make necessary adjustments.\n\n## Example Tactics for Immediate Impact\n\nExecute specific tactics to see immediate improvements:\n\n- Utilize email marketing campaigns for high ROI.\n- Leverage AI tools for personalized customer interactions.\n\n## Conclusion\n\nBy implementing these strategic tactics, you'll be able to enhance your marketing efforts significantly in 2026. These actionable steps will lead to measurable success and growth.\n\n## Call to action\n\nBegin executing these tactical steps to enhance your marketing strategy. Explore our detailed guides and templates to optimize your approach today.",
+			},
+		],
+		airtableId: "recBUctbtzWsa6idz",
+		tone: "technical",
+		audience: "Business Executives",
+	},
+};
+
 export default function ContentForm() {
 	const router = useRouter();
 
@@ -151,10 +227,11 @@ export default function ContentForm() {
 
 	const onSubmit = async (data: ContentInput) => {
 		setResError(null);
+		setErrorType(null);
 		validate(data);
 
-		// const res = await generateDrafts(data);
-		const res = raw;
+		const res = await generateDrafts(data);
+		// const res = rawX;
 		console.log("res", res);
 		if (!res) {
 			setResError("Something went wrong");
@@ -228,7 +305,6 @@ export default function ContentForm() {
 									{isRegeneRating ? "Regenerating..." : "Regenerate Drafts"}
 								</Button>
 							)}
-							<Button />
 						</Alert>
 					</div>
 				)}
@@ -331,7 +407,7 @@ export default function ContentForm() {
 					<div className="space-y-2">
 						<Select onValueChange={(v) => setValue("tone", v as any)}>
 							<SelectTrigger>
-								<SelectValue placeholder="tone" />
+								<SelectValue placeholder="Tone" />
 							</SelectTrigger>
 
 							<SelectContent>

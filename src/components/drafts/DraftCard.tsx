@@ -11,10 +11,19 @@ import { useState } from "react";
 import { selectDraft } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
-import { clonePageVaryPathWithNewSearchParams } from "next/dist/client/components/segment-cache/vary-path";
 import MarkdownViewer from "../markdown/MarkdownViewer";
+import { DraftAngle, SelectDraftRes } from "@/lib/interface";
 
-export default function DraftCard({ draft, isSubmitting, setIsSubmitting }) {
+interface Props {
+	draft: DraftAngle;
+	isSubmitting: boolean;
+	setIsSubmitting: (value: boolean) => void;
+}
+export default function DraftCard({
+	draft,
+	isSubmitting,
+	setIsSubmitting,
+}: Props) {
 	const router = useRouter();
 	const [resError, setResError] = useState<string | null>(null);
 	const [errorType, setErrorType] = useState<"duplicate" | "error" | null>(
@@ -29,15 +38,16 @@ export default function DraftCard({ draft, isSubmitting, setIsSubmitting }) {
 		message: "Fetched successfully",
 		data: {
 			draft: {
-				x: '{\n    "tweets": [\n        "AI is revolutionizing marketing strategies by enhancing productivity and refining workflows. 🚀 #AIMarketing",\n        "AI tools analyze customer preferences, helping craft data-driven content strategies, optimizing time and resources. 📊",\n        "Predictive insights from AI enhance creativity by suggesting trending topics, streamlining content creation. ✨",\n        "AI identifies optimal channels and timing, ensuring your content reaches the right audience for better engagement. 📈",\n        "Shift to AI-driven marketing for more efficient campaigns. Explore advanced AI tools to boost your content strategy today!"\n    ]\n}',
+				x: '{\n    "tweets": [\n        "Strategic marketing in 2026: How to align your brand with growth trends. 💡",\n        "AI is transforming customer interactions! Embrace it to redefine experiences. 🤖",\n        "Personalized content boosts engagement. Are you creating what your audience craves?",\n        "Position your brand: Align strategies with expectations and use AI for loyalty.",\n        "Make data-driven decisions: Use analytics to adjust strategies and forecast trends.",\n        "Future-proof your brand by embracing strategic marketing trends. Ready for 2026? #MarketingTrends"\n    ]\n}',
 				linkedIn:
-					'{\n    "post": "Explore how AI transforms marketing strategy through automation, productivity boosts, and decision-making enhancements. 🚀\\n\\n❓ Problem: Struggling to adapt your marketing strategy?\\n\\n🔥 Agitate: Traditional methods are time-consuming and inefficient. 😓\\n\\n✅ Solution: AI-driven processes revolutionize content strategy!\\n\\nLet\'s dive in:\\n\\n• AI crafts data-driven strategies by analyzing customer preferences.\\n• Predictive insights suggest trending topics, saving brainstorming time.⏱️\\n• Strategically distribute content for maximum engagement. 📊\\n\\nReady to upgrade your approach? Explore advanced AI tools to boost your content strategy today! 🤖"\n}',
+					'{\n    "post_text": "Explore how strategic marketing trends can drive growth in 2026. Learn about opportunities and industry positioning.\\n\\nStrategic marketing helps you align with broader business goals. But how can you stand out in 2026?\\n\\n🔥 AI is revolutionizing how we interact with customers.\\n📈 Personalized content is key to audience engagement.\\n\\nHere\'s how to position your brand for success:\\n\\n• Align strategies with consumer expectations.\\n• Use AI tools to boost engagement and loyalty.\\n• Rely on analytics for data-driven decisions.\\n\\nEmbrace these trends to drive growth. What\'s your strategy for 2026? 🚀\\n\\nAlign your marketing strategies with emerging trends today and ensure your brand is positioned for success in the future.",\n    "post_markdown": "Explore how strategic marketing trends can drive growth in 2026. Learn about opportunities and industry positioning.\\n\\nStrategic marketing helps you align with broader business goals. But how can you stand out in 2026?\\n\\n🔥 AI is revolutionizing how we interact with customers.\\n📈 Personalized content is key to audience engagement.\\n\\nHere\'s how to position your brand for success:\\n\\n• Align strategies with consumer expectations.\\n• Use AI tools to boost engagement and loyalty.\\n• Rely on analytics for data-driven decisions.\\n\\nEmbrace these trends to drive growth. What\'s your strategy for 2026? 🚀\\n\\nAlign your marketing strategies with emerging trends today and ensure your brand is positioned for success in the future."\n}',
 				email:
-					'{\n    "subject": "Transforming Marketing Strategy with AI",\n    "previewText": "Discover how AI reshapes marketing with automation and insights.",\n    "body": "Hi there,\\n\\nAs digital transformation accelerates, AI is revolutionizing how marketing teams approach content strategies. Let’s explore how:\\n\\n### Introduction to AI in Marketing\\nAI tools boost productivity and refine strategies, marking a shift in digital marketing.\\n\\n### Understanding AI\'s Role in Content Planning\\nAI develops data-driven strategies, analyzing customer preferences for tailored campaigns.\\n\\n### Automating Content Creation with AI\\nPredictive insights aid content creation, offering relevant topics and saving brainstorming time.\\n\\n### Enhancing Distribution with AI Tools\\nAI ensures precise content distribution, boosting engagement by reaching the right audience.\\n\\n### Conclusion: Future of AI in Marketing\\nAs marketing shifts towards AI-driven processes, efficiency and insight grow in strategic planning.\\n\\nExplore advanced AI tools to boost your content strategy today!\\n\\nBest regards,\\nYour Marketing Content Team"\n}',
+					'{\n    "subject": "Explore How Strategic Marketing Trends Can Drive Growth in 2026",\n    "previewText": "Discover strategic marketing trends to position your brand for growth.",\n    "html": "<h1>Explore How Strategic Marketing Trends Can Drive Growth in 2026</h1>\\n<h2>Introduction</h2>\\n<p>As businesses look towards 2026, leveraging strategic marketing trends becomes pivotal. By understanding and capitalizing on these opportunities, you can position your brand for substantial growth. This article explores key trends and strategic insights for the coming year.</p>\\n<h2>The Role of Strategic Marketing</h2>\\n<p>Strategic marketing involves aligning your marketing efforts with broader business goals. It helps in:</p>\\n<ul>\\n<li>Identifying growth opportunities</li>\\n<li>Differentiating from competitors</li>\\n<li>Enhancing brand visibility and market positioning</li>\\n</ul>\\n<h2>Emerging Trends and Opportunities</h2>\\n<p>2026 presents several emerging marketing trends:</p>\\n<ul>\\n<li><strong>AI Integration</strong>: Transforming customer interactions and service delivery, AI is set to redefine customer experiences.</li>\\n<li><strong>Content Personalization</strong>: Creating tailored content that resonates with specific audience segments, enhancing engagement.</li>\\n</ul>\\n<h2>Positioning Your Brand for Success</h2>\\n<p>Strategic positioning is crucial to maintain relevance:</p>\\n<ul>\\n<li>Align marketing strategies with consumer expectations and trends.</li>\\n<li>Utilize AI-powered tools to strengthen customer engagements and brand loyalty.</li>\\n</ul>\\n<h2>Analytics and Data-Driven Decisions</h2>\\n<p>Analytics play a fundamental role in strategic marketing:</p>\\n<ul>\\n<li>Use data to monitor campaign performance and adjust strategies dynamically.</li>\\n<li>Adopt a data-driven approach for predictive modeling and trend forecasting.</li>\\n</ul>\\n<h2>Conclusion</h2>\\n<p>Successful marketing in 2026 will depend on strategic positioning and data-driven insights. Embrace these trends to capitalize on opportunities and drive growth.</p>\\n<p><strong>Align your marketing strategies with emerging trends today and ensure your brand is positioned for success in the future.</strong></p>\\n<p>Best regards,<br>Your Marketing Team</p>",\n    "markdown": "## Explore How Strategic Marketing Trends Can Drive Growth in 2026\\n\\n### Introduction\\nAs businesses look towards 2026, leveraging strategic marketing trends becomes pivotal. By understanding and capitalizing on these opportunities, you can position your brand for substantial growth. This article explores key trends and strategic insights for the coming year.\\n\\n### The Role of Strategic Marketing\\nStrategic marketing involves aligning your marketing efforts with broader business goals. It helps in:\\n\\n- Identifying growth opportunities\\n- Differentiating from competitors\\n- Enhancing brand visibility and market positioning\\n\\n### Emerging Trends and Opportunities\\n2026 presents several emerging marketing trends:\\n\\n- **AI Integration**: Transforming customer interactions and service delivery, AI is set to redefine customer experiences.\\n- **Content Personalization**: Creating tailored content that resonates with specific audience segments, enhancing engagement.\\n\\n### Positioning Your Brand for Success\\nStrategic positioning is crucial to maintain relevance:\\n\\n- Align marketing strategies with consumer expectations and trends.\\n- Utilize AI-powered tools to strengthen customer engagements and brand loyalty.\\n\\n### Analytics and Data-Driven Decisions\\nAnalytics play a fundamental role in strategic marketing:\\n\\n- Use data to monitor campaign performance and adjust strategies dynamically.\\n- Adopt a data-driven approach for predictive modeling and trend forecasting.\\n\\n### Conclusion\\nSuccessful marketing in 2026 will depend on strategic positioning and data-driven insights. Embrace these trends to capitalize on opportunities and drive growth.\\n\\n**Align your marketing strategies with emerging trends today and ensure your brand is positioned for success in the future.**\\n\\nBest regards,\\nYour Marketing Team"\n}',
 			},
-			airtableId: "rec6kwW1VJ2lgyMRF",
+			airtableId: "recBUctbtzWsa6idz",
 		},
 	};
+
 	const handleSelect = async () => {
 		setResError(null);
 		setErrorType(null);
@@ -50,8 +60,8 @@ export default function DraftCard({ draft, isSubmitting, setIsSubmitting }) {
 		};
 		console.log("payload", payload);
 
-		// const res = await selectDraft(payload);
-		const res = raw;
+		const res = await selectDraft(payload);
+		// const res = raw;
 		console.log("select response", res);
 		setIsSubmitting(false);
 		if (res.code && res.code !== 200) {
@@ -77,9 +87,8 @@ export default function DraftCard({ draft, isSubmitting, setIsSubmitting }) {
 
 					<p className="font-medium">{draft.title}</p>
 				</div>
-				{/* 
-				<p className="text-sm text-muted-foreground">{draft.article}</p> */}
-				<MarkdownViewer content={draft.article} />
+
+				<MarkdownViewer content={draft.article_markdown} />
 			</CardContent>
 			{resError && (
 				<div className="grid w-full items-start gap-4">
